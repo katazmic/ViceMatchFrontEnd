@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,17 +9,20 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Starter Template for Bootstrap</title>
+    <title color >Vice Match</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+ 
     <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
+    <link href="/static/css/starter-template.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+<!--    <script src="../../assets/js/ie-emulation-modes-warning.js"></script> -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -30,65 +32,391 @@
   </head>
 
   <body>
-      
-      
-      <nav class="navbar navbar-inverse navbar-fixed-top">
-          <div class="container">
-              <div class="navbar-header">
-                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                      <span class="sr-only">Toggle navigation</span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                  </button>
-                  <a class="navbar-brand" href="#">ViceMatch</a>
-              </div>
-              <div id="navbar" class="collapse navbar-collapse">
-                  <ul class="nav navbar-nav">
-                      <li class="active"><a href="#">Home</a></li>
-                      <li><a href="#about">About</a></li>
-                      <li><a href="#contact">Contact</a></li>
-                  </ul>
-              </div><!--/.nav-collapse -->
-          </div>
-      </nav>
-      <br><br>
-      
-      
-              
-   
 
+    
+    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
-   
-           <table class="table">
-          <tr><h4>You are sipping on a {{WhiskeyName}}</h4></tr>
-               <tr><th><img src = http://{{WhiskeyImage}} width=100></th>
-              <th>Palate: {{WhiskeyPalate}} <br>
-              Nose: {{WhiskeyNose}}</th></tr>
-            
-          <table>
-                    <p class="lead"> These following cigars will bring out the {{ WhiskeyCategories }} notes in your {{WhiskeyName}}. </p>
-              
-              <table class="table">
-                  <tr><td> Cigar</td><td>Description</td><td>Major Notes</td></tr>
-                  {% for cigar in matchedCigars %}
-                  <tr><td> {{ cigar['name']}}<br> <img src = {{cigar['image']}} width=150></td><td>{{ cigar['flavor']}}</td> <td>{{ cigar['notes']}} </td></tr>
-                  {% endfor %}
-              </table>
-              
-             
-      </div><!-- /.container -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">ViceMatch</a>
+        </div>
+      </div>
+    </nav>
+<br><br>
+    <div class="container">
+
+      <div class="starter-template">
+        <h1>Match Your Whiskey with a Cigar</h1>
+      </div>
+        
+
+
+     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+
+
+
+
+
+
+    </div><!-- /.container -->
+  
       
+    <div class = "container">
+	  	
+          <table class="table">
+               
+                 
+                  <tr><h2>{{whiskey['name']}}</h2><img src = http://{{whiskey['image']}} width=200><br><h4>{{whiskey['notes']}}</h4></td></tr>
+                
+              </table>
+
+</div>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+  
 
 
+	    <div "text-align:center">
+          <table class="table">
+               
+	  
+	<tr><td> <h2>Best Match for your {{ cigar_BM['strength']}} Bodied Whiskey</h2></td></tr>
+	<tr><td> <h3>{{cigar_BM['name']}}</h3><br> <img src = {{cigar_BM['image']}} width=250><br><h4>{{cigar_BM['notes']}}</h4> </td><td><td> <br><item id = "matched_bm"></td><tr>
+	  <tr><td> <h2>Or Pick a Cigar to Accentuate a Flavor</h2></td></tr>
+	  {% for cigars in moreMatches %}
+	<tr><td> <h3>{{cigars['name']}}</h3><br> <img src = {{cigars['image']}} width=250><br><h4>{{cigars['notes']}}</h4> </td><td><td> <br><item id = "matched_{{loop.index}}"></td><tr>
+	  {% endfor %}
+ 
+	   </table>
+    </div>
+  
+
+        <script src="http://code.angularjs.org/1.3.5/angular.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+
+     <!-- D3 D3 D3 D3         D3 matrix!!  -->
+ 
+	<!-- D3.js -->	
+        <script src="http://d3js.org/d3.v3.js"></script>
+	<script src="/static/js/d3.stretched.chord.js"></script>
+	<script src="/static/js/d3.layout.chord.sort.js"></script>
+	
+	<!-- jQuery -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	
+	<!-- Open Sans & CSS -->
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:700,400,300' rel='stylesheet' type='text/css'>
+	  <style>
+		body {
+		  font-family: 'Open Sans', sans-serif;
+		  font-size: 12px;
+		  font-weight: 400;
+		  color: #8c564b;
+		  text-align: center;
+		}	
+		
+		line {
+		  stroke: #000;
+		  stroke-width: 1.px;
+		}
+
+		text {
+		  font-size: 8px;
+		}
+
+		.titles{
+		  font-size: 10px;
+		}
+
+		path.chord {
+		  fill-opacity: .80;
+		}
+	  </style>
+</head>
+
+
+     <div class = "container" "text-align:center" style="float">
+	 
+
+      <form  action="/fullmatchF" method="GET">
+          <div>
+          <button type="submit" class="btn btn-warning btn-lg" style="float:center"> Best Matches for Full-Bodied Vices</button>
+        </div>
+
+      </form>
+
+      
+      <form  action="/fullmatchMF" method="GET">
+          <div>
+          <button type="submit" class="btn btn-warning btn-lg" style="float:center"> Best Matches for Medium-Full Bodied Vices</button>
+        </div>
+
+      </form>
+
+      
+      <form  action="/fullmatchM" method="GET">
+          <div>
+          <button type="submit" class="btn btn-warning btn-lg" style="float:center"> Best Matches for Medium-Bodied Vices</button>
+        </div>
+
+      </form>
+
+      
+      <form  action="/fullmatchLM" method="GET">
+          <div>
+          <button type="submit" class="btn btn-warning btn-lg" style="float:center"> Best Matches Light-Medium Bodied Vices</button>
+        </div>
+
+      </form>
+
+      
+      <form  action="/fullmatchL" method="GET">
+          <div>
+          <button type="submit" class="btn btn-warning btn-lg" style="float:center"> Best Matches for Light-Bodied Vices</button>
+        </div>
+
+      </form>
+    </div>
+
+    
+
+  <body>
+
+    <div id="chart"></div>	
+  <!--  <script src="/static/js/chord.js"></script> -->
+	
+ 
+ 
+    <!-- D3 D3 D3 D3         D3   -->
+
+  </body>
+
+
+    <!-- D3 D3 D3 D3         D3   -->
 
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- Placed at the end of the document so the pages load faster 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
-  </body>
+    <script src="../../dist/js/bootstrap.min.js"></script>   -->
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug 
+	 <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>-->
+
+  <!--    <script src="http://code.angularjs.org/1.3.5/angular.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script> -->
+  <script src="../static/js/app.js"></script>
+  <script src="../static/js/radar.js"></script>
+  <script src="../static/js/radarDraw.js"></script>
+    <meta charset="utf-8">
+
+
+
+<style>
+body {
+  padding: 20px;
+}
+</style>
+
+<style>
+.radar-chart .area {
+  fill-opacity: 0.7;
+}
+.radar-chart.focus .area {
+  fill-opacity: 0.3;
+}
+.radar-chart.focus .area.focused {
+  fill-opacity: 0.9;
+}
+.area.whiskey, .whiskey .circle {
+  fill: #e6550d;
+  stroke: none;
+}
+.area.cigar, .cigar .circle {
+  fill: #8c564b; <!--ff7f0e; ,#e6550d;-->
+  stroke: none;
+}
+</style>
+
+<script src="http://d3js.org/d3.v3.js"></script>
+<script src="https://rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.js"></script>
+
+<script>
+RadarChart.defaultConfig.color = function() {};
+RadarChart.defaultConfig.radius = 3;
+RadarChart.defaultConfig.w = 400;
+RadarChart.defaultConfig.h = 400;
+</script>
+
+
+<script>
+var data = [
+  {
+    className: 'whiskey', // optional can be used for styling
+    axes: [
+      {axis: "Wood", value: 0.1+ {{whiskey['wood']}}},// '{{WhiskeyName}}' if string just curly brackets otherwise 
+      {axis: "Fruits", value: 0.1+{{whiskey['fruits']}}}, 
+      {axis: "Spice", value: 0.1 + {{whiskey['spice']}}},  
+      {axis: "Earth", value: 0.1 + {{whiskey['earth']}}},  
+      {axis: "Nuts", value: 0.1 + {{whiskey['nuts']}}},
+      {axis: "Cereal", value: 0.1+ {{whiskey['cereal']}}},
+      {axis: "Chocolate", value: 0.1 + {{whiskey['chocolate']}}},
+      {axis: "Vanilla", value: 0.1 + {{whiskey['vanilla']}}},
+       {axis: "Flowers", value: 0.1 + {{whiskey['flowers']}}},
+      {axis: "Coffee", value: 0.1 + {{whiskey['coffee']}}},
+      {axis: "Feint", value: 0.1 + {{whiskey['feint']}}},
+
+
+    ]
+  },
+  {
+    className: 'cigar',
+    axes: [
+      {axis: "Wood", value: 0.1+ {{cigar_BM['wood']}}},// '{{WhiskeyName}}' if string just curly brackets otherwise 
+      {axis: "Fruits", value: 0.1+{{cigar_BM['fruits']}}}, 
+      {axis: "Spice", value: 0.1 + {{cigar_BM['spice']}}},  
+      {axis: "Earth", value: 0.1 + {{cigar_BM['earth']}}},  
+      {axis: "Nuts", value: 0.1 + {{cigar_BM['nuts']}}},
+      {axis: "Cereal", value: 0.1+ {{cigar_BM['cereal']}}},
+      {axis: "Chocolate", value: 0.1 + {{cigar_BM['chocolate']}}},
+      {axis: "Vanilla", value: 0.1 + {{cigar_BM['vanilla']}}},
+       {axis: "Flowers", value: 0.1 + {{cigar_BM['flowers']}}},
+      {axis: "Coffee", value: 0.1 + {{cigar_BM['coffee']}}},
+      {axis: "Feint", value: 0.1 + {{cigar_BM['feint']}}},
+   ]
+  }
+];
+
+</script>
+
+
+
+<script>
+var chart = RadarChart.chart();
+var cfg = chart.config(); // retrieve default config
+var svg = d3.select('#matched_bm').append('svg')
+  .attr('width', cfg.w )
+  .attr('height', cfg.h + cfg.h / 4);
+svg.append('g').classed('single', 1).datum(data).call(chart);
+
+</script>
+
+
+
+
+  <!--------------------------------------------------->
+<!------------------------------------------------------------------------->
+
+{% for cigars in moreMatches %}
+  <!--    <script src="http://code.angularjs.org/1.3.5/angular.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script> -->
+  <script src="../static/js/app.js"></script>
+  <script src="../static/js/radar.js"></script>
+  <script src="../static/js/radarDraw.js"></script>
+    <meta charset="utf-8">
+
+
+
+<style>
+body {
+  padding: 20px;
+}
+</style>
+
+<style>
+.radar-chart .area {
+  fill-opacity: 0.7;
+}
+.radar-chart.focus .area {
+  fill-opacity: 0.3;
+}
+.radar-chart.focus .area.focused {
+  fill-opacity: 0.9;
+}
+.area.whiskey, .whiskey .circle {
+  fill: #e6550d;
+  stroke: none;
+}
+.area.cigar, .cigar .circle {
+  fill: #8c564b; <!--ff7f0e; ,#e6550d;-->
+  stroke: none;
+}
+</style>
+
+<script src="http://d3js.org/d3.v3.js"></script>
+<script src="https://rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.js"></script>
+
+<script>
+RadarChart.defaultConfig.color = function() {};
+RadarChart.defaultConfig.radius = 3;
+RadarChart.defaultConfig.w = 400;
+RadarChart.defaultConfig.h = 400;
+</script>
+
+
+<script>
+var data = [
+  {
+    className: 'whiskey', // optional can be used for styling
+    axes: [
+      {axis: "Wood", value: 0.1+ {{whiskey['wood']}}},// '{{WhiskeyName}}' if string just curly brackets otherwise 
+      {axis: "Fruits", value: 0.1+{{whiskey['fruits']}}}, 
+      {axis: "Spice", value: 0.1 + {{whiskey['spice']}}},  
+      {axis: "Earth", value: 0.1 + {{whiskey['earth']}}},  
+      {axis: "Nuts", value: 0.1 + {{whiskey['nuts']}}},
+      {axis: "Cereal", value: 0.1+ {{whiskey['cereal']}}},
+      {axis: "Chocolate", value: 0.1 + {{whiskey['chocolate']}}},
+      {axis: "Vanilla", value: 0.1 + {{whiskey['vanilla']}}},
+      {axis: "Flowers", value: 0.1 + {{whiskey['flowers']}}},
+      {axis: "Coffee", value: 0.1 + {{whiskey['coffee']}}},
+      {axis: "Feint", value: 0.1 + {{whiskey['feint']}}},
+
+
+    ]
+  },
+  {
+    className: 'cigar',
+    axes: [
+      {axis: "Wood", value: 0.1+ {{cigars['wood']}}},// '{{WhiskeyName}}' if string just curly brackets otherwise 
+      {axis: "Fruits", value: 0.1+{{cigars['fruits']}}}, 
+      {axis: "Spice", value: 0.1 + {{cigars['spice']}}},  
+      {axis: "Earth", value: 0.1 + {{cigars['earth']}}},  
+      {axis: "Nuts", value: 0.1 + {{cigars['nuts']}}},
+      {axis: "Cereal", value: 0.1+ {{cigars['cereal']}}},
+      {axis: "Chocolate", value: 0.1 + {{cigars['chocolate']}}},
+      {axis: "Vanilla", value: 0.1 + {{cigars['vanilla']}}},
+      {axis: "Flowers", value: 0.1 + {{cigars['flowers']}}},
+      {axis: "Coffee", value: 0.1 + {{cigars['coffee']}}},
+      {axis: "Feint", value: 0.1 + {{cigars['feint']}}},
+   ]
+  }
+];
+
+</script>
+
+
+
+<script>
+var chart = RadarChart.chart();
+var cfg = chart.config(); // retrieve default config
+var svg = d3.select('#matched_{{loop.index}}').append('svg')
+  .attr('width', cfg.w )
+  .attr('height', cfg.h + cfg.h / 4);
+svg.append('g').classed('single', 1).datum(data).call(chart);
+
+</script>
+
+{% endfor %}
+
 </html>

@@ -12,41 +12,86 @@ def cities_input():
 def cigar_output():
     #pull 'ID' from input field and store it
     WhiskeyName = request.args.get('ID')
-    db = mdb.connect(user = "root", host = "localhost", db = "WhiskeyAndCigars", charset = 'utf8')
+    db = mdb.connect(user = "root", host = "localhost", db = "ViceMatch", charset = 'utf8')
     with db:
         cur = db.cursor()
-        cur.execute("SELECT notes, image, Palate, Nose, categories FROM whiskey_info WHERE name='%s';" % WhiskeyName)
-        query_whiskey_input = cur.fetchall()
+        ################### info about the whiskey #################
+
+    cur.execute("USE ViceMatchUpdated;")
+    cur.execute("SELECT wood, fruits, spice, earth, nuts, cereal, chocolate, vanilla, flowers, coffee, feint, name, notes,image,strength FROM whiskey_info WHERE name = '%s';"%(WhiskeyName))
+    query_whiskey = cur.fetchall()
+    crs = query_whiskey[0]
     
-    for whisk in query_whiskey_input:
-        WhiskeyNotes = whisk[0]
-        WhiskeyImage = whisk[1]
-        WhiskeyPalate= whisk[2]
-        WhiskeyNose= whisk[3]
-        WhiskeyCategories = whisk[4]
-            
-    with db:
-        cur = db.cursor()
-        cur.execute("SELECT cigarName, matchScore FROM cigar_whiskey_match WHERE whiskeyName='%s' ORDER BY matchScore DESC LIMIT 3;" % WhiskeyName)
-        query_match_output = cur.fetchall()
-            
-    cigName = []
-    matchScores = []
-    for result in query_match_output:
-        cigName.append(result[0])
-        matchScores.append(result[1])
-
-    with db:
-        cur = db.cursor()
-        cur.execute("SELECT name, notes, flavor, image FROM cigar_info WHERE name = '%s' OR name = '%s' OR name = '%s';" %(cigName[0],cigName[1], cigName[2]))
-        query_cigar_output = cur.fetchall()
-
-    matchedCigars = []
-    for result in query_cigar_output:
-        matchedCigars.append(dict(name=result[0], notes=result[1], flavor=result[2], image=result[3], matchScore = matchScores[cigName.index(result[0])]))
+    whiskey = dict(wood = crs[0], fruits = crs[1], spice = crs[2], earth = crs[3], nuts = crs[4], cereal = crs[5], chocolate = crs[6], vanilla = crs[7], flowers = crs[8], coffee = crs[9], feint = crs[10], name = crs[11] ,notes = crs[12], image = crs[13], strength = crs[14])
 
 
 
-    return render_template("output.html", WhiskeyImage = WhiskeyImage ,matchedCigars = matchedCigars, WhiskeyName = WhiskeyName , WhiskeyNotes = WhiskeyNotes,WhiskeyCategories = WhiskeyCategories, WhiskeyPalate= WhiskeyPalate,WhiskeyNose = WhiskeyNose, cigN = cigName[1])
 
+        #########################  BM CIGAR ##########################3
+  
+    cur.execute("USE ViceMatchUpdated;")
+    cur.execute("SELECT cigarName FROM Vmatch_more WHERE whiskeyName = '%s' AND category = 'ALL' ORDER BY overallMatch DESC LIMIT 1;" %(WhiskeyName))
+    query_best_match = cur.fetchall()            
+    cigar_BM_name = query_best_match[0]
+
+    
+    cur.execute("USE ViceMatchUpdated;")
+    cur.execute("SELECT wood, fruits, spice, earth, nuts, cereal, chocolate, vanilla, flowers, coffee, feint, name, notes,image,strength FROM cigar_info WHERE name = '%s';"%(cigar_BM_name))
+    query_cigar_info = cur.fetchall()
+    crs = query_cigar_info[0]
+    
+    cigar_BM = dict(wood = crs[0], fruits = crs[1], spice = crs[2], earth = crs[3], nuts = crs[4], cereal = crs[5], chocolate = crs[6], vanilla = crs[7], flowers = crs[8], coffee = crs[9], feint = crs[10], name = crs[11] ,notes = crs[12], image = crs[13], strength = crs[14])
+
+
+        
+
+        ############## More Matches info ##################
+        
+
+    cur.execute("USE ViceMatchUpdated;")
+    cur.execute("SELECT cigarName FROM Vmatch_more WHERE whiskeyName = '%s' AND category != 'ALL';" %(WhiskeyName))
+    query_more_matches = cur.fetchall()
+
+    conditionMatch = 'name = '
+    for i in query_more_matches[:-1]:
+        conditionMatch = conditionMatch +  '\''+i[0]+'\'' + ' OR name = '
+
+    conditionMatch = conditionMatch +  ' \'' + query_more_matches[-1][0] + '\''
+    
+
+    cur.execute("USE ViceMatchUpdated;")
+    cur.execute("SELECT wood, fruits, spice, earth, nuts, cereal, chocolate, vanilla, flowers, coffee, feint, name, notes,image,strength FROM cigar_info WHERE %s;"%(conditionMatch))
+    query_more_matches_info = cur.fetchall()
+    print 'hi'
+    moreMatches = []
+    for crs in query_more_matches_info:
+        if crs[13] != 'https://cdn2.jrcigars.com/images/item/default.jpg/220/220':
+            moreMatches.append(dict(wood = crs[0], fruits = crs[1], spice = crs[2], earth = crs[3], nuts = crs[4], cereal = crs[5], chocolate = crs[6], vanilla = crs[7], flowers = crs[8], coffee = crs[9], feint = crs[10], name = crs[11] ,notes = crs[12], image = crs[13],strength = crs[14]))
+ 
+
+
+        
+    return render_template("output.html", whiskey = whiskey, cigar_BM = cigar_BM, moreMatches = moreMatches)
+
+
+
+@app.route('/fullmatchF')
+def fullOutputf():
+    return render_template("fullmatchF.html")
+
+@app.route('/fullmatchMF')
+def fullOutputmf():
+    return render_template("fullmatchMF.html")
+
+@app.route('/fullmatchM')
+def fullOutputm():
+    return render_template("fullmatchM.html")
+
+@app.route('/fullmatchLM')
+def fullOutputlm():
+    return render_template("fullmatchLM.html")
+
+@app.route('/fullmatchL')
+def fullOutputl():
+    return render_template("fullmatchL.html")
 
