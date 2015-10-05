@@ -1,8 +1,7 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+        <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
@@ -29,12 +28,164 @@
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-
-  <body>
+      -->
 
     
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+
+
+
+        <script src="http://code.angularjs.org/1.3.5/angular.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <link rel="stylesheet" href="/resources/demos/style.css">
+
+  <script>
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+            ui.item.option.selected = true;
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass empty string as value to search for, displaying all results
+            input.autocomplete( "search", "" );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+        response( this.element.children( "option" ).map(function() {
+          var text = $( this ).text();
+          if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.autocomplete( "instance" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#combobox" ).combobox();
+    $( "#toggle" ).click(function() {
+      $( "#combobox" ).toggle();
+    });
+  });
+  </script>
+</head>
+  <body>
+
+      
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -68,26 +219,6 @@
     </div><!-- /.container -->
 
 
-
-      
-      
-    <div class = "container">
-
-      <form  action="/output" method="GET">
-        <div class="form-group">
-         <!-- <label for="ID">City  Name:</label> -->
-            <label for="ID"><h3> What are you sipping on? </h3> <br></label> <br>
-          <input type="text" id="ID" name='ID' placeholder="e.g. Ledaig 32 Year Old 1972">
-        </div>
-
-        <div>
-	  <br>
-          <button type="submit" class="btn btn-warning btn-lg"> Find a match!</button>
-        
-
-      </form>
-    </div>
-
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="static/js/bootstrap.min.js"></script>
 
@@ -95,24 +226,369 @@
 
         <script src="http://code.angularjs.org/1.3.5/angular.js"></script>
   <script src="http://d3js.org/d3.v3.min.js"></script>
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
 
+  <form  action="/output" method="GET">
+    <div class="form-group">
+      <!-- <label for="ID">City  Name:</label> -->
+      <label for="ID"><h3> What are you sipping on? </h3> <br></label> <br>
+      <div class="ui-widget">
+	<select name="ID">
+          <!--<option  value="Ledaig 10 Year Old">Ledaig 10 Year Old</option>
+	      <option  value="Scallywag">Scallywag</option>-->
+	  <option value="1776 Straight Rye Whiskey">1776 Straight Rye Whiskey</option>
+<option value="Aberlour 15 Year Old Select Cask Reserve">Aberlour 15 Year Old Select Cask Reserve</option>
+	  <option value="Adnams Single Malt No 1 ">Adnams Single Malt No 1 </option>
+<option value="Amrut Herald ">Amrut Herald </option>
+<option value="Amrut Peated Single Malt Whisky">Amrut Peated Single Malt Whisky</option>
+<option value="Amrut Portonova">Amrut Portonova</option>
+<option value="Ancnoc 1999">Ancnoc 1999</option>
+<option value="Ancnoc Rutter">Ancnoc Rutter</option>
+<option value="Ardbeg 10 Year Old Escape Pack With 2 "shortie" Glasses">Ardbeg 10 Year Old Escape Pack With 2 "shortie" Glasses</option>
+<option value="Ardbeg 10 Year Old">Ardbeg 10 Year Old</option>
+<option value="Ardbeg 1978">Ardbeg 1978</option>
+<option value="Ardbeg 1998 Single Cask">Ardbeg 1998 Single Cask</option>
+<option value="Ardbeg Feis Ile 2011">Ardbeg Feis Ile 2011</option>
+<option value="Ardbeg Uigeadail">Ardbeg Uigeadail</option>
+<option value="Ardmore 25 Year Old">Ardmore 25 Year Old</option>
+<option value="Arran 2004 (bottled 2012) Orkney Bere Barley">Arran 2004 (bottled 2012) Orkney Bere Barley</option>
+<option value="Arran Lochranza Reserve">Arran Lochranza Reserve</option>
+<option value="Arran Premier Cru Sauternes Finish (haut Peyraguey)">Arran Premier Cru Sauternes Finish (haut Peyraguey)</option>
+<option value="Arran The Devil\'s Punch Bowl Chapter II (angels And Devils)">Arran The Devil's Punch Bowl Chapter II (angels And Devils)</option>
+<option value="Auchentoshan 14 Year Old Cooper\'s Reserve">Auchentoshan 14 Year Old Cooper's Reserve</option>
+<option value="Auchentoshan 18 Year Old Oloroso Sherry">Auchentoshan 18 Year Old Oloroso Sherry</option>
+<option value="Auchentoshan 18 Year Old">Auchentoshan 18 Year Old</option>
+<option value="Auchentoshan 21 Year Old">Auchentoshan 21 Year Old</option>
+<option value="Auchentoshan 32 Year Old 1973">Auchentoshan 32 Year Old 1973</option>
+<option value="Auchentoshan 44 Year Old 1966">Auchentoshan 44 Year Old 1966</option>
+<option value="Auchentoshan American Oak">Auchentoshan American Oak</option>
+<option value="Auchentoshan Heartwood 1l">Auchentoshan Heartwood 1l</option>
+<option value="Auchentoshan Three Wood">Auchentoshan Three Wood</option>
+<option value="Auchentoshan Virgin Oak">Auchentoshan Virgin Oak</option>
+<option value="Auchroisk 1991 (berry Bros. & Rudd)">Auchroisk 1991 (berry Bros. & Rudd)</option>
+<option value="Baker\'s 7 Year Old">Baker's 7 Year Old</option>
+<option value="Balvenie 12 Year Old Doublewood">Balvenie 12 Year Old Doublewood</option>
+<option value="Balvenie 14 Year Old Caribbean Cask">Balvenie 14 Year Old Caribbean Cask</option>
+<option value="Balvenie 21 Year Old Portwood Finish">Balvenie 21 Year Old Portwood Finish</option>
+<option value="Balvenie Founders Reserve With Bar Stand">Balvenie Founders Reserve With Bar Stand</option>
+<option value="Basil Hayden\'s 75cl">Basil Hayden's 75cl</option>
+<option value="Ben Nevis 10 Year Old">Ben Nevis 10 Year Old</option>
+<option value="Benriach 22 Year Old 1990 Tawny Port Pipe">Benriach 22 Year Old 1990 Tawny Port Pipe</option>
+<option value="Benriach 32 Year Old 1979 (adelphi)">Benriach 32 Year Old 1979 (adelphi)</option>
+<option value="Benromach 10 Year Old">Benromach 10 Year Old</option>
+<option value="Big Peat">Big Peat</option>
+<option value="Bladnoch 13 Year Old">Bladnoch 13 Year Old</option>
+<option value="Blair Athol 13 Year Old 1998 (berry Bros. & Rudd)">Blair Athol 13 Year Old 1998 (berry Bros. & Rudd)</option>
+<option value="Blanton\'s Special Reserve">Blanton's Special Reserve</option>
+<option value="Bowmore 12 Year Old">Bowmore 12 Year Old</option>
+<option value="Bowmore 15 Year Old Feis Ile 2011">Bowmore 15 Year Old Feis Ile 2011</option>
+<option value="Bowmore 16 Year Old 1990 Sherry Matured">Bowmore 16 Year Old 1990 Sherry Matured</option>
+<option value="Bowmore 16 Year Old 1992 Bordeaux Wine Cask Finish">Bowmore 16 Year Old 1992 Bordeaux Wine Cask Finish</option>
+<option value="Bowmore 29 Year Old 1982">Bowmore 29 Year Old 1982</option>
+<option value="Bowmore 37 Year Old 1968">Bowmore 37 Year Old 1968</option>
+<option value="Bowmore 8 Year Old 2001 (adelphi)">Bowmore 8 Year Old 2001 (adelphi)</option>
+<option value="Bowmore Darkest">Bowmore Darkest</option>
+<option value="Braeval 13 Year Old 1998 (signatory)">Braeval 13 Year Old 1998 (signatory)</option>
+<option value="Brora 25 Year Old">Brora 25 Year Old</option>
+<option value="Brora 30 Year Old (2007 Release)">Brora 30 Year Old (2007 Release)</option>
+<option value="Bruichladdich 1970 (32 Year Old)">Bruichladdich 1970 (32 Year Old)</option>
+<option value="Bruichladdich 1984 Redder Still (22 Year Old)">Bruichladdich 1984 Redder Still (22 Year Old)</option>
+<option value="Bruichladdich 1984">Bruichladdich 1984</option>
+<option value="Bruichladdich 1998 Manzanilla Sherry Cask Matured">Bruichladdich 1998 Manzanilla Sherry Cask Matured</option>
+<option value="Bruichladdich 21 Year Old Oloroso Cask Finish">Bruichladdich 21 Year Old Oloroso Cask Finish</option>
+<option value="Bruichladdich Octomore 04.1">Bruichladdich Octomore 04.1</option>
+<option value="Bruichladdich Waves">Bruichladdich Waves</option>
+<option value="Bunnahabhain 12 Year Old Feis Ile 2012">Bunnahabhain 12 Year Old Feis Ile 2012</option>
+<option value="Bunnahabhain 12 Year Old">Bunnahabhain 12 Year Old</option>
+<option value="Bunnahabhain 13 Year Old 1997 (adelphi)">Bunnahabhain 13 Year Old 1997 (adelphi)</option>
+<option value="Bunnahabhain 18 Year Old">Bunnahabhain 18 Year Old</option>
+<option value="Bunnahabhain 21 Year Old 1990 (cask 19) (berry Bros. & Rudd)">Bunnahabhain 21 Year Old 1990 (cask 19) (berry Bros. & Rudd)</option>
+<option value="Bunnahabhain 34 Year Old 1973 (jim Mcewan\'s Celtic Heartlands)">Bunnahabhain 34 Year Old 1973 (jim Mcewan's Celtic Heartlands)</option>
+<option value="Bushmills 1608 400th Anniversary">Bushmills 1608 400th Anniversary</option>
+<option value="Bushmills 21 Year Old">Bushmills 21 Year Old</option>
+<option value="Bushmills Black Bush">Bushmills Black Bush</option>
+<option value="Cameron Brig">Cameron Brig</option>
+<option value="Caol Ila 10 Year Old Unpeated Style (2009 Release)">Caol Ila 10 Year Old Unpeated Style (2009 Release)</option>
+<option value="Caol Ila 11 Year Old 1999 (signatory)">Caol Ila 11 Year Old 1999 (signatory)</option>
+<option value="Caol Ila 12 Year Old 1999 (signatory)">Caol Ila 12 Year Old 1999 (signatory)</option>
+<option value="Caol Ila 12 Year Old 1999 Casks 310801 & 310806 (signatory)">Caol Ila 12 Year Old 1999 Casks 310801 & 310806 (signatory)</option>
+<option value="Caol Ila 12 Year Old">Caol Ila 12 Year Old</option>
+<option value="Caol Ila 25 Year Old 1978">Caol Ila 25 Year Old 1978</option>
+<option value="Caol Ila Feis Ile 2009">Caol Ila Feis Ile 2009</option>
+<option value="Cask Islay (a. D. Rattray)">Cask Islay (a. D. Rattray)</option>
+<option value="Chivas Regal 25 Year Old">Chivas Regal 25 Year Old</option>
+<option value="Clynelish 15 Year Old 1997 (cask 6470) (berry Bros. & Rudd)">Clynelish 15 Year Old 1997 (cask 6470) (berry Bros. & Rudd)</option>
+<option value="Cragganmore 25 Year Old 1988 (2014 Special Release)">Cragganmore 25 Year Old 1988 (2014 Special Release)</option>
+<option value="Craigellachie 2000 (berry Bros. & Rudd)">Craigellachie 2000 (berry Bros. & Rudd)</option>
+<option value="Dalmore 12 Year Old">Dalmore 12 Year Old</option>
+<option value="Dalmore 15 Year Old">Dalmore 15 Year Old</option>
+<option value="Dalmore King Alexander III">Dalmore King Alexander III</option>
+<option value="Dalmore Valour 1l">Dalmore Valour 1l</option>
+<option value="Dalwhinnie 15 Year Old">Dalwhinnie 15 Year Old</option>
+<option value="Dalwhinnie 20 Year Old">Dalwhinnie 20 Year Old</option>
+<option value="Dalwhinnie The Manager\'s Dram">Dalwhinnie The Manager's Dram</option>
+<option value="Darkness! Tobermory 17 Year Old Oloroso Cask Finish">Darkness! Tobermory 17 Year Old Oloroso Cask Finish</option>
+<option value="Darkness! Tobermory Heavily Peated 16 Year Old Oloroso Cask Finish">Darkness! Tobermory Heavily Peated 16 Year Old Oloroso Cask Finish</option>
+<option value="Dewar\'s 18 Year Old Founders Reserve">Dewar's 18 Year Old Founders Reserve</option>
+<option value="Eagle Rare 10 Year Old 75cl">Eagle Rare 10 Year Old 75cl</option>
+<option value="Eagle Rare 17 Year Old (bottled 2005)">Eagle Rare 17 Year Old (bottled 2005)</option>
+<option value="Edradour 10 Year Old">Edradour 10 Year Old</option>
+<option value="Edradour Ballechin #1 Burgundy Cask Matured (the Discovery Series)">Edradour Ballechin #1 Burgundy Cask Matured (the Discovery Series)</option>
+<option value="English Whisky Co. Chapter 11">English Whisky Co. Chapter 11</option>
+<option value="English Whisky Co. Chapter 15 20cl">English Whisky Co. Chapter 15 20cl</option>
+<option value="English Whisky Co. Chapter 9 20cl">English Whisky Co. Chapter 9 20cl</option>
+<option value="English Whisky Co. Chapter 9">English Whisky Co. Chapter 9</option>
+<option value="Evan Williams 2000 Single Barrel">Evan Williams 2000 Single Barrel</option>
+<option value="FEW White Dog ">FEW White Dog </option>
+<option value="Famous Grouse 16 Year Old Double Matured">Famous Grouse 16 Year Old Double Matured</option>
+<option value="George T. Stagg Bourbon (2012 Release)">George T. Stagg Bourbon (2012 Release)</option>
+<option value="Glen Moray 12 Year Old">Glen Moray 12 Year Old</option>
+<option value="Glen Moray Centenary Port Wood Finish">Glen Moray Centenary Port Wood Finish</option>
+<option value="Glen Scotia 12 Year Old (new Bottling)">Glen Scotia 12 Year Old (new Bottling)</option>
+<option value="Glen Scotia 16 Year Old">Glen Scotia 16 Year Old</option>
+<option value="Glen Scotia 20 Year Old 1991 (signatory)">Glen Scotia 20 Year Old 1991 (signatory)</option>
+<option value="Glenbridge 40 Year Old (aldi)">Glenbridge 40 Year Old (aldi)</option>
+<option value="Glendronach 19 Year Old 1991 Olorosso Sherry Finish">Glendronach 19 Year Old 1991 Olorosso Sherry Finish</option>
+<option value="Glendronach 19 Year Old 1993 ">Glendronach 19 Year Old 1993 </option>
+<option value="Glenfarclas 105">Glenfarclas 105</option>
+<option value="Glenfarclas 12 Year Old">Glenfarclas 12 Year Old</option>
+<option value="Glenfarclas 15 Year Old">Glenfarclas 15 Year Old</option>
+<option value="Glenfarclas 1952 Family Cask Release III">Glenfarclas 1952 Family Cask Release III</option>
+<option value="Glenfarclas 1961 Family Cask Release VII">Glenfarclas 1961 Family Cask Release VII</option>
+<option value="Glenfarclas 1961 Family Cask">Glenfarclas 1961 Family Cask</option>
+<option value="Glenfarclas 1968 Family Cask Release VI">Glenfarclas 1968 Family Cask Release VI</option>
+<option value="Glenfarclas 1969 Family Cask Release VI">Glenfarclas 1969 Family Cask Release VI</option>
+<option value="Glenfarclas 1970 Family Cask">Glenfarclas 1970 Family Cask</option>
+<option value="Glenfarclas 1971 Family Cask Release VII">Glenfarclas 1971 Family Cask Release VII</option>
+<option value="Glenfarclas 1971 Family Cask">Glenfarclas 1971 Family Cask</option>
+<option value="Glenfarclas 1974 Family Cask">Glenfarclas 1974 Family Cask</option>
+<option value="Glenfarclas 1980 Family Cask">Glenfarclas 1980 Family Cask</option>
+<option value="Glenfarclas 1982 Family Cask Release V">Glenfarclas 1982 Family Cask Release V</option>
+<option value="Glenfarclas 1984 Family Cask">Glenfarclas 1984 Family Cask</option>
+<option value="Glenfarclas 1985 Family Cask">Glenfarclas 1985 Family Cask</option>
+<option value="Glenfarclas 1986 Family Cask">Glenfarclas 1986 Family Cask</option>
+<option value="Glenfarclas 1987 Family Cask">Glenfarclas 1987 Family Cask</option>
+<option value="Glenfarclas 1993 Family Cask Release V">Glenfarclas 1993 Family Cask Release V</option>
+<option value="Glenfarclas 1993 Family Cask">Glenfarclas 1993 Family Cask</option>
+<option value="Glenfarclas 1995 Family Cask Release VI">Glenfarclas 1995 Family Cask Release VI</option>
+<option value="Glenfiddich 12 Year Old Toasted Oak Limited Edition">Glenfiddich 12 Year Old Toasted Oak Limited Edition</option>
+<option value="Glenfiddich 29 Year Old \'spirit Of A Nation\'">Glenfiddich 29 Year Old 'spirit Of A Nation'</option>
+<option value="Glenfiddich 30 Year Old 2010 Release">Glenfiddich 30 Year Old 2010 Release</option>
+<option value="Glenglassaugh 30 Year Old">Glenglassaugh 30 Year Old</option>
+<option value="Glenglassaugh Revival">Glenglassaugh Revival</option>
+<option value="Glengoyne 2000 Millennium Clock">Glengoyne 2000 Millennium Clock</option>
+<option value="Glenmorangie 18 Year Old Extremely Rare">Glenmorangie 18 Year Old Extremely Rare</option>
+<option value="Glenrothes 1988 (bottled 2011)">Glenrothes 1988 (bottled 2011)</option>
+<option value="Green Spot Single Pot Still">Green Spot Single Pot Still</option>
+<option value="Greenore 8 Year Old">Greenore 8 Year Old</option>
+<option value="Haig Club">Haig Club</option>
+<option value="Hakushu 12 Year Old">Hakushu 12 Year Old</option>
+<option value="Hakushu 25 Year Old ">Hakushu 25 Year Old </option>
+<option value="Hakushu Bourbon Barrel">Hakushu Bourbon Barrel</option>
+<option value="Hazelburn 10 Year Old">Hazelburn 10 Year Old</option>
+<option value="Hibiki 12 Year Old ">Hibiki 12 Year Old </option>
+<option value="Hibiki 12 Year Old 50cl">Hibiki 12 Year Old 50cl</option>
+<option value="Hibiki 17 Year Old">Hibiki 17 Year Old</option>
+<option value="Hibiki 21 Year Old">Hibiki 21 Year Old</option>
+<option value="Highland Journey Blended Malt Scotch Whisky">Highland Journey Blended Malt Scotch Whisky</option>
+<option value="Highland Park 12 Year Old">Highland Park 12 Year Old</option>
+<option value="Highland Park 18 Year Old">Highland Park 18 Year Old</option>
+<option value="Highland Park Dark Origins">Highland Park Dark Origins</option>
+<option value="Ichiro\'s Malt & Grain">Ichiro's Malt & Grain</option>
+<option value="Inchmurrin 15 Year Old 1996 Cask 28 (signatory)">Inchmurrin 15 Year Old 1996 Cask 28 (signatory)</option>
+<option value="Islay Mist Deluxe">Islay Mist Deluxe</option>
+<option value="Isle Of Jura 16 Year Old (diurachs\' Own)">Isle Of Jura 16 Year Old (diurachs' Own)</option>
+<option value="Isle Of Jura 35 Year Old 1976 (cask 888) (berry Bros. & Rudd)">Isle Of Jura 35 Year Old 1976 (cask 888) (berry Bros. & Rudd)</option>
+<option value="Isle Of Jura Superstition">Isle Of Jura Superstition</option>
+<option value="Jack Daniel\'s Silver Select">Jack Daniel's Silver Select</option>
+<option value="Jack Daniel\'s Sinatra Select">Jack Daniel's Sinatra Select</option>
+<option value="Jameson Select Reserve Small Batch">Jameson Select Reserve Small Batch</option>
+<option value="Jefferson\'s Bourbon">Jefferson's Bourbon</option>
+<option value="Johnnie Walker Black Label + 2 Glasses">Johnnie Walker Black Label + 2 Glasses</option>
+<option value="Johnnie Walker Blue Label 1l">Johnnie Walker Blue Label 1l</option>
+<option value="Johnnie Walker Blue Label Signature 1l">Johnnie Walker Blue Label Signature 1l</option>
+<option value="Johnnie Walker Blue Label With Bill Amberg Traveller Bag">Johnnie Walker Blue Label With Bill Amberg Traveller Bag</option>
+<option value="Johnnie Walker Blue Label">Johnnie Walker Blue Label</option>
+<option value="Johnnie Walker Double Black">Johnnie Walker Double Black</option>
+<option value="Kilbeggan 8 Year Old Single Grain">Kilbeggan 8 Year Old Single Grain</option>
+<option value="Kilchoman 100% Islay Cask Strength">Kilchoman 100% Islay Cask Strength</option>
+<option value="Kilchoman Inaugural Release">Kilchoman Inaugural Release</option>
+<option value="Kilchoman Loch Gorm 2013 Release">Kilchoman Loch Gorm 2013 Release</option>
+<option value="Kilchoman Machir Bay 2012 Release">Kilchoman Machir Bay 2012 Release</option>
+<option value="Kilchoman Sherry Cask Release">Kilchoman Sherry Cask Release</option>
+<option value="Killyloch 36 Year Old 1967">Killyloch 36 Year Old 1967</option>
+<option value="Lagavulin 12 Year Old (2011 Release)">Lagavulin 12 Year Old (2011 Release)</option>
+<option value="Lagavulin 16 Year Old">Lagavulin 16 Year Old</option>
+<option value="Laphroaig Cairdeas Ileach Edition">Laphroaig Cairdeas Ileach Edition</option>
+<option value="Laphroaig Select">Laphroaig Select</option>
+<option value="Laphroaig Triple Wood 1l">Laphroaig Triple Wood 1l</option>
+<option value="Laphroaig Triple Wood">Laphroaig Triple Wood</option>
+<option value="Lark Single Cask Whisky">Lark Single Cask Whisky</option>
+<option value="Lark Single Malt Cask Strength">Lark Single Malt Cask Strength</option>
+<option value="Ledaig 10 Year Old">Ledaig 10 Year Old</option>
+<option value="Ledaig 32 Year Old 1972">Ledaig 32 Year Old 1972</option>
+<option value="Linkwood 26 Year Old 1984 Cask 5266 (adelphi)">Linkwood 26 Year Old 1984 Cask 5266 (adelphi)</option>
+<option value="Longmorn 15 Year Old 1996 Rare Auld ">Longmorn 15 Year Old 1996 Rare Auld </option>
+<option value="Longmorn 1997 (berry Bros. & Rudd)">Longmorn 1997 (berry Bros. & Rudd)</option>
+<option value="Longrow 18 Year Old">Longrow 18 Year Old</option>
+<option value="Longrow Peated">Longrow Peated</option>
+<option value="Macallan Diamond Jubilee 2012">Macallan Diamond Jubilee 2012</option>
+<option value="Mackmyra Brukswhisky (the Swedish Whisky)">Mackmyra Brukswhisky (the Swedish Whisky)</option>
+<option value="Mackmyra Midnattssol">Mackmyra Midnattssol</option>
+<option value="Master Of Malt 30 Year Old Speyside (4th Edition)">Master Of Malt 30 Year Old Speyside (4th Edition)</option>
+<option value="Master Of Malt 30 Year Old Speyside (6th Edition)">Master Of Malt 30 Year Old Speyside (6th Edition)</option>
+<option value="Master Of Malt 50 Year Old Speyside (4th Edition)">Master Of Malt 50 Year Old Speyside (4th Edition)</option>
+<option value="Master Of Malt 60 Year Old Speyside">Master Of Malt 60 Year Old Speyside</option>
+<option value="Master Of Malt Islay Single Malt">Master Of Malt Islay Single Malt</option>
+<option value="Master Of Malt Lowland Single Malt">Master Of Malt Lowland Single Malt</option>
+<option value="Master Of Malt Speyside Single Malt">Master Of Malt Speyside Single Malt</option>
+<option value="Matisse 21 Year Old">Matisse 21 Year Old</option>
+<option value="Midleton Barry Crockett Legacy">Midleton Barry Crockett Legacy</option>
+<option value="Millstone Peated">Millstone Peated</option>
+<option value="Miyagikyo 15 Year Old">Miyagikyo 15 Year Old</option>
+<option value="Miyagikyo Non Age">Miyagikyo Non Age</option>
+<option value="Mortlach 18 Year Old">Mortlach 18 Year Old</option>
+<option value="Mortlach Royal Wedding (gordon And Macphail)">Mortlach Royal Wedding (gordon And Macphail)</option>
+<option value="Muckle Flugga Blended Malt">Muckle Flugga Blended Malt</option>
+<option value="New Zealand 21 Year Old 1990">New Zealand 21 Year Old 1990</option>
+<option value="New Zealand 22 Year Old 1989">New Zealand 22 Year Old 1989</option>
+<option value="New Zealand 23 Year Old 1988">New Zealand 23 Year Old 1988</option>
+<option value="Nikka Pure Malt Red">Nikka Pure Malt Red</option>
+<option value="Nikka Super Whisky">Nikka Super Whisky</option>
+<option value="Nikka Taketsuru 12 Year Old">Nikka Taketsuru 12 Year Old</option>
+<option value="Nikka Taketsuru 17 Year Old">Nikka Taketsuru 17 Year Old</option>
+<option value="Nikka Taketsuru 21 Year Old">Nikka Taketsuru 21 Year Old</option>
+<option value="Nikka Whisky From The Barrel Cocktail Set">Nikka Whisky From The Barrel Cocktail Set</option>
+<option value="Nikka Whisky From The Barrel">Nikka Whisky From The Barrel</option>
+<option value="Old Hobart Overeem Bourbon Cask Matured (cask Strength) (cask OHD 065)">Old Hobart Overeem Bourbon Cask Matured (cask Strength) (cask OHD 065)</option>
+<option value="Old Pulteney 12 Year Old">Old Pulteney 12 Year Old</option>
+<option value="Old Rip Van Winkle 10 Year Old (stumpy)">Old Rip Van Winkle 10 Year Old (stumpy)</option>
+<option value="Pappy Van Winkle\'s Family Reserve Bourbon 15 Year Old">Pappy Van Winkle's Family Reserve Bourbon 15 Year Old</option>
+<option value="Pappy Van Winkle\'s Family Reserve Bourbon 20 Year Old">Pappy Van Winkle's Family Reserve Bourbon 20 Year Old</option>
+<option value="Paul John Brilliance">Paul John Brilliance</option>
+<option value="Paul John Peated Select Cask ">Paul John Peated Select Cask </option>
+<option value="Paul John Single Cask Indian Whisky (cask P1 163)">Paul John Single Cask Indian Whisky (cask P1 163)</option>
+<option value="Peaty, Sherry Cask Finished Blended Malt Whisky (batshit Mental Ideas)">Peaty, Sherry Cask Finished Blended Malt Whisky (batshit Mental Ideas)</option>
+<option value="Penderyn Madeira 41">Penderyn Madeira 41</option>
+<option value="Penderyn Madeira Finish 1l">Penderyn Madeira Finish 1l</option>
+<option value="Penderyn Madeira Finish 35cl">Penderyn Madeira Finish 35cl</option>
+<option value="Penderyn Madeira Finish">Penderyn Madeira Finish</option>
+<option value="Penderyn Portwood Cask Finish Pt26">Penderyn Portwood Cask Finish Pt26</option>
+<option value="Penderyn Red Flag (icons Of Wales)">Penderyn Red Flag (icons Of Wales)</option>
+<option value="Penderyn WRU Grand Slam 2012">Penderyn WRU Grand Slam 2012</option>
+<option value="Penderyn With Tasting Glass">Penderyn With Tasting Glass</option>
+<option value="Penderyn With Two Tasting Glasses">Penderyn With Two Tasting Glasses</option>
+<option value="Pig\'s Nose">Pig's Nose</option>
+<option value="Powers John\'s Lane Release 12 Year Old Single Pot Still">Powers John's Lane Release 12 Year Old Single Pot Still</option>
+<option value="Redbreast 15 Year Old">Redbreast 15 Year Old</option>
+<option value="Redemption Rye Whiskey">Redemption Rye Whiskey</option>
+<option value="Reference Series I">Reference Series I</option>
+<option value="Reference Series II">Reference Series II</option>
+<option value="Reference Series III">Reference Series III</option>
+<option value="Sazerac Straight Rye 18 Year Old Whiskey (fall 2009)">Sazerac Straight Rye 18 Year Old Whiskey (fall 2009)</option>
+<option value="Scallywag">Scallywag</option>
+<option value="Seagram\'s V.o.">Seagram's V.o.</option>
+<option value="Singleton Of Dufftown Sunray">Singleton Of Dufftown Sunray</option>
+<option value="Smith\'s Glenlivet 1974 (gordon & Macphail)">Smith's Glenlivet 1974 (gordon & Macphail)</option>
+<option value="Smith\'s Glenlivet 1977">Smith's Glenlivet 1977</option>
+<option value="Smooth Ambler Contradiction Bourbon">Smooth Ambler Contradiction Bourbon</option>
+<option value="Smooth Ambler Old Scout 10 Year Old Bourbon">Smooth Ambler Old Scout 10 Year Old Bourbon</option>
+<option value="Spirit Of Hven Seven Stars No.1 Dubhe Single Malt Whisky">Spirit Of Hven Seven Stars No.1 Dubhe Single Malt Whisky</option>
+<option value="Spirit Of Hven Seven Stars No.2 Merak Single Malt Whisky">Spirit Of Hven Seven Stars No.2 Merak Single Malt Whisky</option>
+<option value="Spirit Of Hven Seven Stars No.3 Phecda Single Malt Whisky">Spirit Of Hven Seven Stars No.3 Phecda Single Malt Whisky</option>
+<option value="Spirit Of Hven Urania Single Malt Whisky">Spirit Of Hven Urania Single Malt Whisky</option>
+<option value="Springbank 15 Year Old">Springbank 15 Year Old</option>
+<option value="Springbank 18 Year Old Second Edition">Springbank 18 Year Old Second Edition</option>
+<option value="Springbank Batch 1 (that Boutique Y Whisky Company)">Springbank Batch 1 (that Boutique Y Whisky Company)</option>
+<option value="St. George Breaking & Entering Bourbon">St. George Breaking & Entering Bourbon</option>
+<option value="Strathisla 1965 (gordon & Macphail)">Strathisla 1965 (gordon & Macphail)</option>
+<option value="Strathisla 1970 (gordon & Macphail)">Strathisla 1970 (gordon & Macphail)</option>
+<option value="Strathmill 24 Year Old 1986 (adelphi)">Strathmill 24 Year Old 1986 (adelphi)</option>
+<option value="Talisker 10 Year Old">Talisker 10 Year Old</option>
+<option value="Talisker Port Ruighe">Talisker Port Ruighe</option>
+<option value="Teeling Single Grain">Teeling Single Grain</option>
+<option value="Teeling Single Malt">Teeling Single Malt</option>
+<option value="The Glenlivet 12 Year Old (old Edition)">The Glenlivet 12 Year Old (old Edition)</option>
+<option value="The Glenlivet 12 Year Old">The Glenlivet 12 Year Old</option>
+<option value="The Hive 12 Year Old (wemyss Malts)">The Hive 12 Year Old (wemyss Malts)</option>
+<option value="The Irishman Founder\'s Reserve">The Irishman Founder's Reserve</option>
+<option value="The Irishman Single Malt Irish Whiskey">The Irishman Single Malt Irish Whiskey</option>
+<option value="The Macallan 12 Year Old Sherry Oak">The Macallan 12 Year Old Sherry Oak</option>
+<option value="The Naked Grouse">The Naked Grouse</option>
+<option value="The Wild Geese Classic Blend Irish Whiskey 50cl">The Wild Geese Classic Blend Irish Whiskey 50cl</option>
+<option value="Timorous Beastie">Timorous Beastie</option>
+<option value="Tobermory 10 Year Old">Tobermory 10 Year Old</option>
+<option value="Tomatin 12 Year Old (40%)">Tomatin 12 Year Old (40%)</option>
+<option value="Tomatin 40 Year Old 1967 (jim Mcewan\'s Celtic Heartlands)">Tomatin 40 Year Old 1967 (jim Mcewan's Celtic Heartlands)</option>
+<option value="Tomatin Legacy Gift Pack With Two Glasses">Tomatin Legacy Gift Pack With Two Glasses</option>
+<option value="Tomatin Legacy">Tomatin Legacy</option>
+<option value="Tomintoul 21 Year Old">Tomintoul 21 Year Old</option>
+<option value="Tomintoul With A Peaty Tang 1l">Tomintoul With A Peaty Tang 1l</option>
+<option value="Tullamore D.e.w. 12 Year Old Special Reserve">Tullamore D.e.w. 12 Year Old Special Reserve</option>
+<option value="Tullamore D.e.w.">Tullamore D.e.w.</option>
+<option value="Tyrconnell 10 Year Old Sherry Cask Finish">Tyrconnell 10 Year Old Sherry Cask Finish</option>
+<option value="Uisce Beatha Blended Irish Whiskey">Uisce Beatha Blended Irish Whiskey</option>
+<option value="Van Winkle Special Reserve 12 Year Old">Van Winkle Special Reserve 12 Year Old</option>
+<option value="Wemyss Winter Spice 1982 (teaninich)">Wemyss Winter Spice 1982 (teaninich)</option>
+<option value="White Bowmore 43 Year Old 1964">White Bowmore 43 Year Old 1964</option>
+<option value="William Larue Weller Bourbon 2013">William Larue Weller Bourbon 2013</option>
+<option value="Writers Tears Pot Still Blend">Writers Tears Pot Still Blend</option>
+<option value="Yamazaki 12 Year Old">Yamazaki 12 Year Old</option>
+<option value="Yellow Spot 12 Year Old">Yellow Spot 12 Year Old</option>
+<option value="Yoichi 10 Year Old Gift Pack With 2 Glasses">Yoichi 10 Year Old Gift Pack With 2 Glasses</option>
+<option value="Yoichi 10 Year Old">Yoichi 10 Year Old</option>
+<option value="allt a bhainne 12 year old 2000 provenance douglas laing whisky">allt a bhainne 12 year old 2000 provenance douglas laing whisky</option>
+<option value="allt a bhainne 19 year old 1991 cask 109436 cask strength collection signatory whisky">allt a bhainne 19 year old 1991 cask 109436 cask strength collection signatory whisky</option>
+<option value="bruichladdich 20 year old flirtation 2nd edition whisky">bruichladdich 20 year old flirtation 2nd edition whisky</option>
+<option value="bunnahabhain ceobanach whisky">bunnahabhain ceobanach whisky</option>
+<option value="clynelish 15 year old 1997 strictly limited carn mor whisky">clynelish 15 year old 1997 strictly limited carn mor whisky</option>
+<option value="dailuaine 27 year old 1983 single cask master of malt whisky">dailuaine 27 year old 1983 single cask master of malt whisky</option>
+<option value="darkness benrinnes 15 year old pedro ximenez cask finish whisky">darkness benrinnes 15 year old pedro ximenez cask finish whisky</option>
+<option value="darkness bruichladdich 12 year old pedro ximenez cask finish whisky">darkness bruichladdich 12 year old pedro ximenez cask finish whisky</option>
+<option value="darkness dailuaine 15 pedro ximenez cask finish whisky">darkness dailuaine 15 pedro ximenez cask finish whisky</option>
+<option value="edradour 13 year old 1997 chateaneuf du pape cask finish straight from the cask whisky">edradour 13 year old 1997 chateaneuf du pape cask finish straight from the cask whisky</option>
+<option value="fettercairn 23 year old cask 1374 1989 celebration of the cask carn mor whisky">fettercairn 23 year old cask 1374 1989 celebration of the cask carn mor whisky</option>
+<option value="glenfarclas 50 year old single cask for the chaps at master of malt whisky">glenfarclas 50 year old single cask for the chaps at master of malt whisky</option>
+<option value="mackinlays shackleton rare old highland malt the journey whisky">mackinlays shackleton rare old highland malt the journey whisky</option>
+<option value="the yamazaki single malt whisky distillers reserve whisky">the yamazaki single malt whisky distillers reserve whisky</option>
 
-     <!-- D3 D3 D3 D3         D3 matrix!!  -->
+	  
+	  
+	</select>
+      </div>	    
+    </div>   
+    <div>
+      <br>
+      <button type="submit" class="btn btn-warning btn-lg"> Find a match!</button>
+    </div>
+  </form>
  
-	<!-- D3.js -->	
-        <script src="http://d3js.org/d3.v3.js"></script>
-	<script src="/static/js/d3.stretched.chord.js"></script>
-	<script src="/static/js/d3.layout.chord.sort.js"></script>
+ 
+         <script src="http://d3js.org/d3.v3.js"></script>
 	
 	<!-- jQuery -->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	
 	<!-- Open Sans & CSS -->
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:700,400,300' rel='stylesheet' type='text/css'>
-	  <style>
+	
+	<style>
+
+	    .custom-combobox {
+	    position: relative;
+	    display: inline-block;
+	    }
+	    .custom-combobox-toggle {
+	    position: absolute;
+	    top: 0;
+	    bottom: 0;
+	    margin-left: -1px;
+	    padding: 0;
+	    }
+	    .custom-combobox-input {
+	    margin: 0;
+	    padding: 5px 10px;
+	    }
+	  
 		body {
 		  font-family: 'Open Sans', sans-serif;
 		  font-size: 12px;
@@ -138,15 +614,5 @@
 		  fill-opacity: .80;
 		}
 	  </style>
-  </head>
-  <body>
-
-    <div id="chart"></div>	
-  <!--  <script src="/static/js/chord.js"></script> -->
-	
- 
- 
-    <!-- D3 D3 D3 D3         D3   -->
-
-  </body>
+</body>
 </html>
